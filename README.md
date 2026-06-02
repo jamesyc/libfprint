@@ -227,7 +227,15 @@ sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpa
 
 ## Build notes
 
-The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. 
+The source package is included under `source/`, and the integrated driver patches are under `patches/`. To refresh the source package after changing the top-level patches or Debian packaging, run:
+
+```sh
+./scripts/refresh-source-package.sh
+```
+
+The refresh script updates the stable source package files and leaves source-only `.buildinfo` and `.changes` output in `.source-refresh/`; those files are host-specific upload metadata and are not tracked.
+
+GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. The quilt series separates the VFS0090 work by responsibility:
 
 - `0001-vfs0090-import-driver.patch` imports the driver sources from the VFS0090 upstream work
 - `0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch` carries the local integrated-libfprint and enrollment fixes

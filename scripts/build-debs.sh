@@ -23,7 +23,7 @@ while IFS= read -r patch_file; do
     echo "error: $patch_file does not match source package $debian_patch" >&2
     exit 1
   fi
-done < <(find "$repo_root/patches" -maxdepth 1 -type f \( -name '*.patch' -o -name series \) | sort)
+done < <(find "$repo_root/patches" -maxdepth 1 -type f ! -name '.*' \( -name '*.patch' -o -name series \) | sort)
 
 version="$(dpkg-parsechangelog -l "$build_root/source/debian/changelog" -S Version)"
 if [[ "$version" != "$expected_version" ]]; then
@@ -69,4 +69,3 @@ if [[ "$meta_depends" != *"libfprint-2-2 (= $main_version)"* ]]; then
 fi
 
 sha256sum "$main_deb" "$meta_deb"
-
