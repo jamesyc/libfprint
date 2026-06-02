@@ -30,7 +30,7 @@ Description: async fingerprint library of fprint project, shared libraries
  .
  This package provides shared libraries.
 
-Package: libfprint-2-tod-vfs0090
+Package: libfprint-2-vfs0090
 Source: libfprint
 Version: 1:1.94.10+vfs0090-1~deb13vfs1
 Architecture: amd64
@@ -38,19 +38,19 @@ Maintainer: FingerForce Team <fingerforce-devel@lists.alioth.debian.org>
 Installed-Size: 14
 Depends: libfprint-2-2 (= 1:1.94.10+vfs0090-1~deb13vfs1)
 Recommends: fprintd, libpam-fprintd
-Filename: pool/main/libfprint-2-tod-vfs0090_1.94.10+vfs0090-1~deb13vfs1_amd64.deb
-Size: 7460
-MD5sum: 550c9513290c43df3a3dce8be509126b
-SHA1: f34619e367ae0f58366a5ed44dbf767ae9c2e858
-SHA256: ef20f8f3db5823b021d7867b3a5748dbdc864e368dd58629298467c79f908477
+Filename: pool/main/libfprint-2-vfs0090_1.94.10+vfs0090-1~deb13vfs1_amd64.deb
+Size: 7428
+MD5sum: 83b952b28a99a9779713ec29ce86a175
+SHA1: dc1cd59673ee5eeb4ed2087187b60c79ec155a88
+SHA256: a255c36fc1bba873a2a4afd0d1e64b6b467700223d1a677fcca89230c7e4ccc2
 Section: misc
 Priority: optional
 Homepage: https://www.freedesktop.org/wiki/Software/fprint/libfprint
 Description: integrated libfprint support for Validity VFS0090 devices
  The fprint project aims to support consumer fingerprint reader devices.
  .
- This compatibility package installs no external TOD module. It depends on a
- libfprint build that has the Validity VFS0090/VFS0097 driver integrated into
+ This metapackage depends on a libfprint build that has the Validity
+ VFS0090/VFS0097 driver integrated into
  libfprint itself, including support for the 138a:0090 VFS7500 Touch
  Fingerprint Sensor.
  .

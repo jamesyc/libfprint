@@ -1,15 +1,15 @@
 # libfprint VFS0090 packages
 
-Debian trixie packages for the `138a:0090` Validity/Synaptics VFS7500 Touch Fingerprint Sensor used in some 2016-era ThinkPads, including the X1 Yoga.
+Debian and Ubuntu packages for the `138a:0090` Validity/Synaptics VFS7500 Touch Fingerprint Sensor used in some 2016-era ThinkPads, including the X1 Yoga.
 
 Stock Debian trixie ships `libfprint` without this reader. This repo publishes a rebuilt `libfprint-2-2` based on upstream `libfprint` 1.94.10 with the VFS0090/VFS0097 driver integrated, plus a small metapackage:
 
 ```text
 libfprint-2-2              rebuilt libfprint with vfs0090 integrated
-libfprint-2-tod-vfs0090    metapackage depending exactly on the matching libfprint-2-2
+libfprint-2-vfs0090        metapackage depending exactly on the matching libfprint-2-2
 ```
 
-Despite the `tod` name, this is not an external TOD plugin. The driver is integrated into the normal `libfprint-2-2` shared library. The metapackage gives apt users one obvious package to install or remove.
+The driver is integrated into the normal `libfprint-2-2` shared library. The metapackage gives apt users one obvious package to install or remove.
 
 ## Supported device
 
@@ -25,9 +25,87 @@ Expected output includes:
 ID 138a:0090 Validity Sensors, Inc. VFS7500 Touch Fingerprint Sensor
 ```
 
-The upstream VFS0090 work also includes `138a:0097`. This repo was built and tested for Debian trixie on `138a:0090`.
+The upstream VFS0090 work also includes `138a:0097`. This repo was built and tested on Debian trixie with `138a:0090`.
 
-## Install on Debian trixie
+## Supported distributions
+
+This repository currently publishes one `amd64` binary build:
+
+```text
+1:1.94.10+vfs0090-1~deb13vfs1
+```
+
+Use it on:
+
+- Debian 13/trixie, amd64
+- Ubuntu 24.04 LTS/noble or newer, amd64, if apt can satisfy the dependency names shown below
+
+Do not use this binary package on Ubuntu 22.04/jammy. It was built against the newer t64 ABI package names such as `libssl3t64` and `libglib2.0-0t64`, which are not the normal jammy package names.
+
+The runtime dependencies are:
+
+```text
+libc6 (>= 2.38)
+libglib2.0-0t64 (>= 2.68.0)
+libgudev-1.0-0 (>= 146)
+libgusb2 (>= 0.3.3)
+libnss3
+libpixman-1-0
+libssl3t64
+```
+
+## Install on Debian
+
+These instructions were tested on Debian 13/trixie.
+
+Add the repository signing key:
+
+```sh
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://raw.githubusercontent.com/jamesyc/libfprint/main/keys/libfprint-vfs0090.asc |
+  sudo tee /etc/apt/keyrings/libfprint-vfs0090.asc >/dev/null
+```
+
+The current apt signing key fingerprint is:
+
+```text
+54B4 E36B 9FB4 891F D50C  2380 51F7 5602 6D9D 8A4F
+```
+
+Add this GitHub-hosted apt repository:
+
+```sh
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://raw.githubusercontent.com/jamesyc/libfprint/main/apt trixie main' |
+  sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
+```
+
+The `trixie` suite name in the repository line is intentional. It is the path used by this small GitHub-hosted apt repo.
+
+Install:
+
+```sh
+sudo apt update
+sudo apt install fprintd libpam-fprintd libfprint-2-vfs0090
+```
+
+Verify:
+
+```sh
+dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
+```
+
+Expected key lines:
+
+```text
+ii libfprint-2-2             1:1.94.10+vfs0090-1~deb13vfs1
+ii libfprint-2-vfs0090       1:1.94.10+vfs0090-1~deb13vfs1
+ii fprintd                   1.94.5-2
+ii libpam-fprintd            1.94.5-2
+```
+
+## Install on Ubuntu
+
+These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`. They use the same signed repository as Debian. The suite name is still `trixie` because that is the repository path, not your Ubuntu release codename.
 
 Add the repository signing key:
 
@@ -54,22 +132,22 @@ Install:
 
 ```sh
 sudo apt update
-sudo apt install fprintd libpam-fprintd libfprint-2-tod-vfs0090
+sudo apt install fprintd libpam-fprintd libfprint-2-vfs0090
 ```
 
-Verify:
+Verify that apt selected this repo's package:
 
 ```sh
+apt-cache policy libfprint-2-2 libfprint-2-vfs0090
 dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
 ```
 
-Expected key lines:
+If Ubuntu reports unsatisfied dependencies, remove the repo and do not force the install:
 
-```text
-ii libfprint-2-2             1:1.94.10+vfs0090-1~deb13vfs1
-ii libfprint-2-tod-vfs0090   1:1.94.10+vfs0090-1~deb13vfs1
-ii fprintd                   1.94.5-2
-ii libpam-fprintd            1.94.5-2
+```sh
+sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
+sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
+sudo apt update
 ```
 
 ## Initialize the sensor
@@ -109,7 +187,7 @@ fprintd-enroll "$USER"
 
 On GNOME, the device should also appear in Settings after `fprintd` can list it.
 
-For PAM login integration on Debian:
+For PAM login integration on Debian or Ubuntu:
 
 ```sh
 sudo pam-auth-update
@@ -144,13 +222,19 @@ If `fprintd-list "$USER"` says `No devices available` and the journal says `Sens
 Remove the metapackage and runtime tools:
 
 ```sh
-sudo apt remove libfprint-2-tod-vfs0090 fprintd libpam-fprintd
+sudo apt remove libfprint-2-vfs0090 fprintd libpam-fprintd
 ```
 
 Return to Debian's stock `libfprint`:
 
 ```sh
 sudo apt install --allow-downgrades libfprint-2-2=1:1.94.9-1
+```
+
+On Ubuntu, reinstall Ubuntu's stock `libfprint` package instead:
+
+```sh
+sudo apt install --reinstall libfprint-2-2
 ```
 
 Remove the repository:
@@ -176,6 +260,6 @@ The source package is included under `source/`, and the integrated driver patch 
 - adds `vfs0090` to the Meson driver list
 - links the driver against NSS/OpenSSL dependencies available in Debian trixie
 - moves `138a:0090` and `138a:0097` out of libfprint's generated unsupported-device list
-- adds `libfprint-2-tod-vfs0090` as a compatibility metapackage with an exact dependency on the matching `libfprint-2-2`
+- adds `libfprint-2-vfs0090` as a metapackage with an exact dependency on the matching `libfprint-2-2`
 
 Driver and initializer behavior are based on the VFS0090 work in [3v1n0/libfprint](https://github.com/3v1n0/libfprint). The base `libfprint` version used here is upstream 1.94.10 from [freedesktop/libfprint](https://gitlab.freedesktop.org/libfprint/libfprint).
