@@ -75,11 +75,11 @@ The current apt signing key fingerprint is:
 Add this GitHub Pages-hosted apt repository:
 
 ```sh
-echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt trixie main' |
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt any main' |
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
-The `trixie` suite name in the repository line is intentional. It is the path used by this small GitHub Pages-hosted apt repo.
+The `any` suite name in the repository line is intentional. It is a small compatibility suite in this GitHub Pages-hosted apt repo, so the install command does not need to change just because a newer Debian release exists. Apt still enforces the package's runtime dependencies, so do not force the install if dependency resolution fails.
 
 Install:
 
@@ -107,8 +107,8 @@ ii libpam-fprintd            1.94.5-2
 
 These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`. This is
 not a Launchpad PPA; it is the same small signed apt repository used by Debian.
-The suite name is still `trixie` because that is the repository path, not your
-Ubuntu release codename.
+The suite name is `any` because that is the compatibility suite path in this
+apt repo, not your Ubuntu release codename.
 
 This Debian-built binary has not been rebuilt natively on Launchpad. It should
 only be used on Ubuntu releases where apt can satisfy the t64 runtime
@@ -131,7 +131,7 @@ The current apt signing key fingerprint is:
 Add this GitHub Pages-hosted apt repository:
 
 ```sh
-echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt trixie main' |
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt any main' |
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
@@ -287,7 +287,7 @@ The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
 USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
 returned `verify-match`.
 
-The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. The quilt series separates the VFS0090 work by responsibility:
+The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. The deploy publishes both `any` and `trixie` suite indexes that point at the same package pool; `any` is the documented install path, and `trixie` remains available for older source-list entries. The quilt series separates the VFS0090 work by responsibility:
 
 - `0001-vfs0090-import-driver.patch` imports the driver sources from the VFS0090 upstream work
 - `0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch` carries the local integrated-libfprint and enrollment fixes
