@@ -27,8 +27,6 @@ The upstream VFS0090 work includes support for `138a:0097` and  `138a:0090`.
 
 ## Install on Debian
 
-These instructions were tested on Debian 13/trixie.
-
 Add the repository signing key:
 
 ```sh
@@ -53,20 +51,7 @@ sudo apt update
 sudo apt install libfprint-2-vfs0090
 ```
 
-Verify:
-
-```sh
-dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
-```
-
-Expected key lines:
-
-```text
-ii libfprint-2-2             1:1.94.10+vfs0090-1~deb13vfs1
-ii libfprint-2-vfs0090       1:1.94.10+vfs0090-1~deb13vfs1
-ii fprintd                   1.94.5-2
-ii libpam-fprintd            1.94.5-2
-```
+Then read the "Initialize the sensor" and "Enroll fingerprints" section below. 
 
 ## Install on Ubuntu
 
@@ -94,19 +79,10 @@ echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https:/
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
-Update apt and inspect the candidate before installing:
-
-```sh
-sudo apt update
-apt-cache policy libfprint-2-2 libfprint-2-vfs0090
-```
-
-The candidate for both packages should be `1:1.94.10+vfs0090-1~deb13vfs1` from
-`jamesyc.github.io/libfprint`.
-
 Install:
 
 ```sh
+sudo apt update  
 sudo apt install libfprint-2-vfs0090
 ```
 
@@ -115,18 +91,6 @@ Verify that apt selected this repo's package:
 ```sh
 apt-cache policy libfprint-2-2 libfprint-2-vfs0090
 dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
-```
-
-To uninstall on Ubuntu and return to Ubuntu's stock `libfprint`:
-
-```sh
-sudo apt remove libfprint-2-vfs0090
-sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
-sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
-sudo apt update
-apt-cache madison libfprint-2-2
-stock_version="$(apt-cache madison libfprint-2-2 | awk '$1 == "libfprint-2-2" {print $3; exit}')"
-sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
 
 ## Initialize the sensor
@@ -221,6 +185,20 @@ apt-cache madison libfprint-2-2
 Downgrade or reinstall the stock distro package:
 
 ```sh
+stock_version="$(apt-cache madison libfprint-2-2 | awk '$1 == "libfprint-2-2" {print $3; exit}')"
+sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
+```
+
+### Ubuntu Uninstall
+
+To uninstall on Ubuntu and return to Ubuntu's stock `libfprint`:
+
+```sh
+sudo apt remove libfprint-2-vfs0090
+sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
+sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
+sudo apt update
+apt-cache madison libfprint-2-2
 stock_version="$(apt-cache madison libfprint-2-2 | awk '$1 == "libfprint-2-2" {print $3; exit}')"
 sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
