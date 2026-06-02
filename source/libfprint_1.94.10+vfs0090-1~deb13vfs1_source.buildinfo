@@ -3,14 +3,14 @@ Source: libfprint
 Architecture: source
 Version: 1:1.94.10+vfs0090-1~deb13vfs1
 Checksums-Md5:
- b1495565436294d378b27460319b7aea 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ e88a6f50c26578913e3c3b40ccdd9e06 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
 Checksums-Sha1:
- f103adb481eea427d9a53184a7b3881967165328 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 08367811fcf0710ed1ccefa55887e4adb9ec9df1 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
 Checksums-Sha256:
- f3c5a28bfe4fd37958ea78b2c556c17c184c931906d136596efa3e45c93d11d8 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 9d64f7832601c080ab88e394c19d38eddb3421292b31bde4d30ab2bd2b18ac67 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
 Build-Origin: Debian
 Build-Architecture: amd64
-Build-Date: Tue, 02 Jun 2026 05:46:29 -0700
+Build-Date: Tue, 02 Jun 2026 06:13:33 -0700
 Installed-Build-Depends:
  autoconf (= 2.72-3.1),
  automake (= 1:1.17-4),

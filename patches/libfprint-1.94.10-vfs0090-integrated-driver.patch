@@ -28,10 +28,10 @@ index 6c15fb9..2697e08 100644
  usb:v138Ap00A6*
 diff --git a/libfprint/drivers/vfs0090/vfs0090.c b/libfprint/drivers/vfs0090/vfs0090.c
 new file mode 100644
-index 0000000..18909fb
+index 0000000..1c607d6
 --- /dev/null
 +++ b/libfprint/drivers/vfs0090/vfs0090.c
-@@ -0,0 +1,3202 @@
+@@ -0,0 +1,3211 @@
 +/*
 + * Validity VFS0090 driver for libfprint
 + * Copyright (C) 2017 Nikita Mikhailov <nikita.s.mikhailov@gmail.com>
@@ -103,12 +103,6 @@ index 0000000..18909fb
 +};
 +
 +G_DEFINE_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FP_TYPE_DEVICE)
-+
-+GType
-+fpi_tod_shared_driver_get_type (void)
-+{
-+  return fpi_device_vfs0090_get_type ();
-+}
 +
 +G_DEFINE_AUTOPTR_CLEANUP_FUNC (EVP_CIPHER_CTX, EVP_CIPHER_CTX_free);
 +G_DEFINE_AUTOPTR_CLEANUP_FUNC (ECDSA_SIG, ECDSA_SIG_free);
@@ -1692,7 +1686,7 @@ index 0000000..18909fb
 +vfs_device_supports_capture (FpDevice *dev)
 +{
 +  FpDeviceFeature features = fp_device_get_features (dev);
-+  
++
 +  if (!(features & FP_DEVICE_FEATURE_CAPTURE))
 +    return FALSE;
 +
@@ -1753,7 +1747,7 @@ index 0000000..18909fb
 +    }
 +}
 +
-+/* Remove once included in TOD */
++/* Local copy used by the VFS0090 database enrollment path. */
 +static gchar *
 +_fpi_print_generate_user_id (FpPrint *print)
 +{
@@ -2192,11 +2186,26 @@ index 0000000..18909fb
 +
 +        if (print)
 +          {
-+            if (vdev->enroll_stage == 0)
-+              fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
++            FpiPrintType print_type;
 +
-+            fpi_print_add_print (enroll_print, print);
-+            vdev->enroll_stage += 1;
++            g_object_get (enroll_print, "fpi-type", &print_type, NULL);
++            if (print_type == FPI_PRINT_UNDEFINED)
++              {
++                fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
++                print_type = FPI_PRINT_NBIS;
++              }
++
++            if (print_type != FPI_PRINT_NBIS)
++              {
++                g_clear_object (&print);
++                error = fpi_device_error_new_msg (FP_DEVICE_ERROR_GENERAL,
++                                                  "Cannot add NBIS image print to non-NBIS enrollment template");
++              }
++            else
++              {
++                fpi_print_add_print (enroll_print, print);
++                vdev->enroll_stage += 1;
++              }
 +          }
 +
 +        g_set_object (&vdev->enrolled_print, enroll_print);
@@ -3236,10 +3245,10 @@ index 0000000..18909fb
 +}
 diff --git a/libfprint/drivers/vfs0090/vfs0090.h b/libfprint/drivers/vfs0090/vfs0090.h
 new file mode 100644
-index 0000000..f3c2072
+index 0000000..77dcc44
 --- /dev/null
 +++ b/libfprint/drivers/vfs0090/vfs0090.h
-@@ -0,0 +1,877 @@
+@@ -0,0 +1,875 @@
 +/*
 + * Validity VFS0090 driver for libfprint
 + * Copyright (C) 2017 Nikita Mikhailov <nikita.s.mikhailov@gmail.com>
@@ -3265,8 +3274,6 @@ index 0000000..f3c2072
 +#include "fpi-device.h"
 +
 +G_DECLARE_FINAL_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FPI, DEVICE_VFS0090, FpDevice)
-+
-+GType fpi_tod_shared_driver_get_type (void);
 +
 +#define DMI_PRODUCT_NAME_NODE "/sys/class/dmi/id/product_name"
 +#define DMI_PRODUCT_SERIAL_NODE "/sys/class/dmi/id/product_serial"

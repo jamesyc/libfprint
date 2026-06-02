@@ -1,24 +1,24 @@
 Architectures: amd64
 Codename: trixie
 Components: main
-Date: Tue, 02 Jun 2026 12:47:29 +0000
+Date: Tue, 02 Jun 2026 13:14:00 +0000
 Description: libfprint VFS0090 packages
 Label: libfprint-vfs0090
 Origin: jamesyc/libfprint
 Suite: trixie
 MD5Sum:
- de8db187796c7b5deeed3bf62e42ec0d              198 Release
- 7088c65efdc840906c7447d490cabc4e             2641 main/binary-amd64/Packages
- 599f58e12e63e26dda0645df2132fe52             1210 main/binary-amd64/Packages.gz
+ 67b2328b1d56226a62b0df470ccef41d              198 Release
+ c63720255ca9d02107a9b1c263c3f23d             2641 main/binary-amd64/Packages
+ 7e45b174378006426f9eee946d5ddbda             1211 main/binary-amd64/Packages.gz
 SHA1:
- 9b90f3c8aa9f63d518c82c2072434b40517f2569              198 Release
- bf900249ad1475f10ebed4690128e2970d1d9a82             2641 main/binary-amd64/Packages
- ae64dbf16bebab6f510509ac97cd9809d0ed324c             1210 main/binary-amd64/Packages.gz
+ 726b1606a51c0f2a4f20a27bc927f0dbc2078ded              198 Release
+ f4b0c5bb2fb608c6e6e22115340e385a5a7b89b4             2641 main/binary-amd64/Packages
+ a749e75b2dcef53f8f22736b20021c1bc5ceceea             1211 main/binary-amd64/Packages.gz
 SHA256:
- 845fc0516e8b5268f50bdfbcc0a3adf7753b56d2219d604ff929cd88ad922309              198 Release
- e308c628f94b5ec43556cc7f91e26621f5a0c9432c6152ea6ab469f6792c0f29             2641 main/binary-amd64/Packages
- 6fe123621a21c8ddefa62147119aff303ae2e83c2631d25a3d29605242f28134             1210 main/binary-amd64/Packages.gz
+ b0707862641691b2fd731117fd5a7d14c393c9fe4d5f7d36e67f71bbb1515648              198 Release
+ 9ba8249d6456c4889ad55207745d0424a33d6f2528f5680ad2ca33ff3bfd9d28             2641 main/binary-amd64/Packages
+ 1a0af7d9718aa43c22daa62f6c3fa52321e0e5b680acb48ea3abd52a1cb6cb99             1211 main/binary-amd64/Packages.gz
 SHA512:
- bbe15722886a68feba0589cb94f8cd75ef53205e2ef64d5e4f12b270a80bd0c9cd3807cecde1bb1cec05179556f03238ed2bcee540168409baeec87d978ed5ed              198 Release
- a9214bc615914d4a5cf8f4bedaa0b5114adbe190d19d646bc5384466224be0f3c752e86bbee4589d6d79a0c080d3c0779d3e1aee61ab09c3f17ea06b1eb76d03             2641 main/binary-amd64/Packages
- 9df8902abc474f52b17ee4bf6484d6c92cc920a0efa50023ad78c2ebc10e92af7102dc68e50e27521b14cdb76ae9b88ea1f24602db47436ebeaeb930dc53481e             1210 main/binary-amd64/Packages.gz
+ e8fefa1b4866fcfd1501fc8de8f491749de405e01f5d09b074df83983445961482297562e0c1ad0b709cfade1f694c0d817ad4edd09f2e10cc4b1280f8d92fb9              198 Release
+ 5f4f1710e6edbd6a27b35214ec772fb5e8a507c69338dd0ea47d4fdff0fb550682c56725927b4b56122e70b6e2dfec3dc4c9f0bb5291f89668def559cefa4c56             2641 main/binary-amd64/Packages
+ 8f57447c0d7388df43e0b0db464a34bf5c8841d28acaebcd56d54b8cec5dbff9cbd732b0d54c891136f7a66a8bed1434c5ba316c37e5e92c3cf48575457b3ad7             1211 main/binary-amd64/Packages.gz

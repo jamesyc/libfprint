@@ -20,10 +20,10 @@ Package-List:
  libfprint-2-vfs0090 deb misc optional arch=any
 Checksums-Sha1:
  29d870f5df44640d5ee5dfdd8b40b1469dffa432 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
- 297bfef24f8260cec6de3e7fcbc9618d09cd2f5d 34236 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 4399d3fad623ba2f2988a5d43046ca34898daaf9 34448 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
 Checksums-Sha256:
  9e918dab2e46704798b54b34f66a556cb046b0455980b6b6853e24ce7ba9215d 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
- b7e97daa0624c5a8d3b5fd4974018a682c0ce5b6fd0ba567ee76fc0c7d8bce5f 34236 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 6e0d438902130d1c13a0c1d122789be6cfe656b8c6fb9ff46206e38d809e660f 34448 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
 Files:
  57af0d0669066ec0fd845dc783f0020e 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
- 13fda30041833920cd09db140a22d5cb 34236 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 5ebf2f011a7eceac025332cbee00f1e9 34448 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz

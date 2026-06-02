@@ -6,10 +6,10 @@ Maintainer: FingerForce Team <fingerforce-devel@lists.alioth.debian.org>
 Installed-Size: 929
 Depends: libc6 (>= 2.38), libglib2.0-0t64 (>= 2.68.0), libgudev-1.0-0 (>= 146), libgusb2 (>= 0.3.3), libnss3 (>= 2:3.13.4-2~), libpixman-1-0 (>= 0.30.0), libssl3t64 (>= 3.0.0)
 Filename: pool/main/libfprint-2-2_1.94.10+vfs0090-1~deb13vfs1_amd64.deb
-Size: 315124
-MD5sum: 65dcb5c1d936eb607b0c58aca4a964d2
-SHA1: b3490d3a1c9684d79e7aa4a329b75c06bb443752
-SHA256: a096980bb0680b9f743610609d3a7ae7559ced8587348242ce1fa4cd563dfebf
+Size: 314996
+MD5sum: 79c32700398a0e738f26fb13150207f5
+SHA1: f7f6c677de95c566810c8e6a5161159994ed93a4
+SHA256: e77af78a45e5990119f23cdd278e66e34e02650e9ba756ece0ef5be9aaf4f373
 Section: libs
 Priority: optional
 Homepage: https://www.freedesktop.org/wiki/Software/fprint/libfprint

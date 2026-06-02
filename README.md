@@ -254,6 +254,10 @@ Ok:   124
 Fail: 0
 ```
 
+The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
+USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
+returned `verify-match`.
+
 The source package is included under `source/`, and the integrated driver patch is under `patches/`. The patch does five things:
 
 - adds the `vfs0090` driver sources
