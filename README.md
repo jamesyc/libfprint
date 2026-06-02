@@ -6,10 +6,10 @@ Stock Debian trixie ships `libfprint` without this reader. This repo publishes a
 
 ```text
 libfprint-2-2              rebuilt libfprint with vfs0090 integrated
-libfprint-2-vfs0090        metapackage depending exactly on the matching libfprint-2-2
+libfprint-2-vfs0090        metapackage depending on the matching libfprint-2-2 and fprintd
 ```
 
-The driver is integrated into the normal `libfprint-2-2` shared library. The metapackage gives apt users one obvious package to install or remove.
+The driver is integrated into the normal `libfprint-2-2` shared library. The metapackage gives apt users one obvious package to install or remove, and it recommends `libpam-fprintd` so PAM support is installed by default on normal apt setups.
 
 ## Supported device
 
@@ -69,7 +69,7 @@ curl -fsSL https://raw.githubusercontent.com/jamesyc/libfprint/main/keys/libfpri
 The current apt signing key fingerprint is:
 
 ```text
-54B4 E36B 9FB4 891F D50C  2380 51F7 5602 6D9D 8A4F
+6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
 ```
 
 Add this GitHub-hosted apt repository:
@@ -85,7 +85,7 @@ Install:
 
 ```sh
 sudo apt update
-sudo apt install fprintd libpam-fprintd libfprint-2-vfs0090
+sudo apt install libfprint-2-vfs0090
 ```
 
 Verify:
@@ -125,7 +125,7 @@ curl -fsSL https://raw.githubusercontent.com/jamesyc/libfprint/main/keys/libfpri
 The current apt signing key fingerprint is:
 
 ```text
-54B4 E36B 9FB4 891F D50C  2380 51F7 5602 6D9D 8A4F
+6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
 ```
 
 Add this GitHub-hosted apt repository:
@@ -148,7 +148,7 @@ The candidate for both packages should be `1:1.94.10+vfs0090-1~deb13vfs1` from
 Install:
 
 ```sh
-sudo apt install fprintd libpam-fprintd libfprint-2-vfs0090
+sudo apt install libfprint-2-vfs0090
 ```
 
 Verify that apt selected this repo's package:
@@ -170,10 +170,12 @@ To uninstall on Ubuntu and return to Ubuntu's stock `libfprint`:
 
 ```sh
 sudo apt remove libfprint-2-vfs0090
-sudo apt install --reinstall libfprint-2-2 fprintd libpam-fprintd
 sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
 sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
+apt-cache policy libfprint-2-2
+stock_version="$(apt-cache policy libfprint-2-2 | awk '/Candidate:/ {print $2}')"
+sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
 
 ## Initialize the sensor
@@ -207,8 +209,8 @@ After initialization:
 
 ```sh
 sudo systemctl restart fprintd
-fprintd-list "$USER"
-fprintd-enroll "$USER"
+sudo fprintd-list "$USER"
+sudo fprintd-enroll "$USER"
 ```
 
 On GNOME, the device should also appear in Settings after `fprintd` can list it.
@@ -241,34 +243,35 @@ Check `fprintd` logs:
 sudo journalctl -u fprintd -n 80 --no-pager
 ```
 
-If `fprintd-list "$USER"` says `No devices available` and the journal says `Sensor not initialized, init byte is 0x2`, the package is installed and the driver is loading; the initializer still needs to complete.
+If `sudo fprintd-list "$USER"` says `No devices available` and the journal says `Sensor not initialized, init byte is 0x2`, the package is installed and the driver is loading; the initializer still needs to complete.
 
 ## Uninstall
 
-Remove the metapackage and runtime tools:
+Remove the metapackage:
 
 ```sh
-sudo apt remove libfprint-2-vfs0090 fprintd libpam-fprintd
+sudo apt remove libfprint-2-vfs0090
 ```
 
-Return to Debian's stock `libfprint`:
-
-```sh
-sudo apt install --allow-downgrades libfprint-2-2=1:1.94.9-1
-```
-
-On Ubuntu, reinstall Ubuntu's stock `libfprint` package instead:
-
-```sh
-sudo apt install --reinstall libfprint-2-2
-```
-
-Remove the repository:
+Remove the repository before reinstalling stock packages:
 
 ```sh
 sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
 sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
+```
+
+Check that the `libfprint-2-2` candidate now comes from Debian or Ubuntu, not `raw.githubusercontent.com`:
+
+```sh
+apt-cache policy libfprint-2-2
+```
+
+Downgrade or reinstall the stock distro package:
+
+```sh
+stock_version="$(apt-cache policy libfprint-2-2 | awk '/Candidate:/ {print $2}')"
+sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
 
 ## Build notes
@@ -284,12 +287,13 @@ The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
 USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
 returned `verify-match`.
 
-The source package is included under `source/`, and the integrated driver patch is under `patches/`. The patch does five things:
+The source package is included under `source/`, and the integrated driver patch is under `patches/`. The patch does four things:
 
 - adds the `vfs0090` driver sources
 - adds `vfs0090` to the Meson driver list
 - links the driver against NSS/OpenSSL dependencies available in Debian trixie
 - moves `138a:0090` and `138a:0097` out of libfprint's generated unsupported-device list
-- adds `libfprint-2-vfs0090` as a metapackage with an exact dependency on the matching `libfprint-2-2`
+
+The Debian packaging also adds `libfprint-2-vfs0090` as a metapackage. It depends on the matching custom `libfprint-2-2` and `fprintd`, and recommends `libpam-fprintd`.
 
 Driver and initializer behavior are based on the VFS0090 work in [3v1n0/libfprint](https://github.com/3v1n0/libfprint). The base `libfprint` version used here is upstream 1.94.10 from [freedesktop/libfprint](https://gitlab.freedesktop.org/libfprint/libfprint).

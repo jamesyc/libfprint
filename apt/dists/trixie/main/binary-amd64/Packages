@@ -7,9 +7,9 @@ Installed-Size: 929
 Depends: libc6 (>= 2.38), libglib2.0-0t64 (>= 2.68.0), libgudev-1.0-0 (>= 146), libgusb2 (>= 0.3.3), libnss3 (>= 2:3.13.4-2~), libpixman-1-0 (>= 0.30.0), libssl3t64 (>= 3.0.0)
 Filename: pool/main/libfprint-2-2_1.94.10+vfs0090-1~deb13vfs1_amd64.deb
 Size: 314996
-MD5sum: 79c32700398a0e738f26fb13150207f5
-SHA1: f7f6c677de95c566810c8e6a5161159994ed93a4
-SHA256: e77af78a45e5990119f23cdd278e66e34e02650e9ba756ece0ef5be9aaf4f373
+MD5sum: d3dca686573bd56eed23baebb1b24a03
+SHA1: 901a55ca2817503d7603763c92bc7fb1b676cb78
+SHA256: a61ebd396efb2c70b2036f734113208aa2c0c78d21284e47257f41ba83fe63a5
 Section: libs
 Priority: optional
 Homepage: https://www.freedesktop.org/wiki/Software/fprint/libfprint
@@ -36,13 +36,13 @@ Version: 1:1.94.10+vfs0090-1~deb13vfs1
 Architecture: amd64
 Maintainer: FingerForce Team <fingerforce-devel@lists.alioth.debian.org>
 Installed-Size: 14
-Depends: libfprint-2-2 (= 1:1.94.10+vfs0090-1~deb13vfs1)
-Recommends: fprintd, libpam-fprintd
+Depends: libfprint-2-2 (= 1:1.94.10+vfs0090-1~deb13vfs1), fprintd
+Recommends: libpam-fprintd
 Filename: pool/main/libfprint-2-vfs0090_1.94.10+vfs0090-1~deb13vfs1_amd64.deb
-Size: 7428
-MD5sum: 83b952b28a99a9779713ec29ce86a175
-SHA1: dc1cd59673ee5eeb4ed2087187b60c79ec155a88
-SHA256: a255c36fc1bba873a2a4afd0d1e64b6b467700223d1a677fcca89230c7e4ccc2
+Size: 7424
+MD5sum: c7cf660881b9819808626da6b11b822b
+SHA1: ad8c2152326dc33232a47fe11a8f12df3773ec13
+SHA256: eae08d1ff1166106c20223fa74dfe5521ae8ed3ac15535fd773aed3921bf3d69
 Section: misc
 Priority: optional
 Homepage: https://www.freedesktop.org/wiki/Software/fprint/libfprint

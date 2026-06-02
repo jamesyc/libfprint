@@ -13,17 +13,17 @@ Changes:
    * Rebuild upstream libfprint 1.94.10 with integrated Validity
      VFS0090/VFS0097 driver for Debian trixie.
 Checksums-Sha1:
- 08367811fcf0710ed1ccefa55887e4adb9ec9df1 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 4b799aca16ec0d682fdbf9b5b0ba3a076822677b 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
  29d870f5df44640d5ee5dfdd8b40b1469dffa432 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
- 4399d3fad623ba2f2988a5d43046ca34898daaf9 34448 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
- e0640c62621cdd66af94e0c29496026bfe630b21 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
+ 461e1e1ad1357666fe7a506a49db304f9bdb1c54 34312 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 7dc943898309a8a04c285bace2217367744979eb 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
 Checksums-Sha256:
- 9d64f7832601c080ab88e394c19d38eddb3421292b31bde4d30ab2bd2b18ac67 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ c8291ae08aeeabd3852f0de8ebdc771ea5a08ef4c268b7a9048ac0b3626a3807 1935 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
  9e918dab2e46704798b54b34f66a556cb046b0455980b6b6853e24ce7ba9215d 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
- 6e0d438902130d1c13a0c1d122789be6cfe656b8c6fb9ff46206e38d809e660f 34448 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
- bce8f31ddf59268a6f9d100303d690f383a2f6032ccac48d21cf9a366aa7772e 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
+ be4f4f2a31fd365e2a4c87cc05e6b4def9d6a206d6af2d7d4d2371af5325bac9 34312 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 1cfedd8f0684259cbbaa96d197920c1d361a8010bf0b99e023c35b276fcaf81b 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
 Files:
- e88a6f50c26578913e3c3b40ccdd9e06 1935 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 9c21f75363783164483442c24f08139b 1935 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
  57af0d0669066ec0fd845dc783f0020e 7005508 libs optional libfprint_1.94.10+vfs0090.orig.tar.xz
- 5ebf2f011a7eceac025332cbee00f1e9 34448 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
- 6c546b43c563d4828cab8e131fff4ed6 9772 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
+ 081f9f42ed88b83a4feac6e36b7bb434 34312 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ f9082eb5bc087c7fdfee6e7f7216ab9c 9772 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
