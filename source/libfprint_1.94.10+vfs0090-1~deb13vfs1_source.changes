@@ -1,0 +1,29 @@
+Format: 1.8
+Date: Tue, 02 Jun 2026 05:02:44 -0700
+Source: libfprint
+Architecture: source
+Version: 1:1.94.10+vfs0090-1~deb13vfs1
+Distribution: trixie
+Urgency: medium
+Maintainer: FingerForce Team <fingerforce-devel@lists.alioth.debian.org>
+Changed-By: James Chang <james@jycX1Y>
+Changes:
+ libfprint (1:1.94.10+vfs0090-1~deb13vfs1) trixie; urgency=medium
+ .
+   * Rebuild upstream libfprint 1.94.10 with integrated Validity
+     VFS0090/VFS0097 driver for Debian trixie.
+Checksums-Sha1:
+ ece6f27fb57799a970695126cd9002a4a1e915c6 1943 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 29d870f5df44640d5ee5dfdd8b40b1469dffa432 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
+ 10f0287aa0df8c9749ce62e0442a8ef5a326a2d3 34316 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 3ba66accd3828389653e79df2be71035b6faf445 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
+Checksums-Sha256:
+ db953e0ae5e385260cbe0ae85c8107b94773d19d798a998c4dd426242d9d6178 1943 libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 9e918dab2e46704798b54b34f66a556cb046b0455980b6b6853e24ce7ba9215d 7005508 libfprint_1.94.10+vfs0090.orig.tar.xz
+ 579b53c81d38f7a191f376afeedac5bdc0cdc930c6e55cad022cc6914b79cc13 34316 libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ b45ea8eb3e9db1c878c65abb55e8912b08eaf077c3676fa86cf783ec69331746 9772 libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo
+Files:
+ 58fc2cb599481a548cbe5f719e4c8d7f 1943 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.dsc
+ 57af0d0669066ec0fd845dc783f0020e 7005508 libs optional libfprint_1.94.10+vfs0090.orig.tar.xz
+ 9d9df42e615188b52abe6f346e042a18 34316 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1.debian.tar.xz
+ 734514594a24726f775ce46c2e3ca9f6 9772 libs optional libfprint_1.94.10+vfs0090-1~deb13vfs1_source.buildinfo

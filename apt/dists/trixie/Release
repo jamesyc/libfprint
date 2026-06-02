@@ -1,0 +1,24 @@
+Architectures: amd64
+Codename: trixie
+Components: main
+Date: Tue, 02 Jun 2026 12:34:21 +0000
+Description: libfprint VFS0090 packages
+Label: libfprint-vfs0090
+Origin: jamesyc/libfprint
+Suite: trixie
+MD5Sum:
+ a68afe239ecabb0744717c722d8f0f76              198 Release
+ 18b649151812e73bde9d42c1eda63583             2695 main/binary-amd64/Packages
+ 9b7d8e11a99135b4c7b07911f9a5f905             1242 main/binary-amd64/Packages.gz
+SHA1:
+ bef3199c4810b04c159001094d171be86430c291              198 Release
+ 2fc213fd1e5fa781c0bdf25fcd0e35b8516c186d             2695 main/binary-amd64/Packages
+ 8ee3f29bed9a878a0086f271eb68ea3fbabfe2c0             1242 main/binary-amd64/Packages.gz
+SHA256:
+ 8317fff41c4181150ea7093359cacb645c44b5c84b838377f5b0e7704c9e253f              198 Release
+ e2cd3f0df422a66ce6dd491853a1f3a9a774d9ddf067173b555257b7b088660e             2695 main/binary-amd64/Packages
+ 0f783c29a3d648ec14ca65f918ea8e7527c2abd0100ae9dfc738c30de5fc741c             1242 main/binary-amd64/Packages.gz
+SHA512:
+ 1eda8a5f16291b63e3dccf2f28805618b595a00318dc89d0f8203474312612b7380e56317971a30f075d2df45af61afb36824aa6884d819080f0d2b9cc395900              198 Release
+ e7d3ae5b8c9955fc0a9dcc2831b549cd61361a464334ec328cd84e18f0ed9800453a6a24443b5bbd219177d6a115ef8044c0a77657586875fe50494cc60188f1             2695 main/binary-amd64/Packages
+ b5d0837a082738f9abe9fa678c286de195dd5c1eaaeabbe5ef4f789989137e1f5402bfb0fe347a119b0bfa257e7c8a0d15e26b1eb0b72545103f412b7cd0e58a             1242 main/binary-amd64/Packages.gz
