@@ -2,14 +2,12 @@
 
 Debian and Ubuntu packages for the `138a:0090` Validity/Synaptics VFS7500 Touch Fingerprint Sensor used in some 2016-era ThinkPads, including the X1 Yoga.
 
-Stock Debian trixie ships `libfprint` without this reader. This repo publishes a rebuilt `libfprint-2-2` based on upstream `libfprint` 1.94.10 with the VFS0090/VFS0097 driver integrated, plus a small metapackage:
+Stock Debian trixie ships `libfprint` without this reader. This repo publishes a rebuilt `libfprint-2-2` based on upstream `libfprint` 1.94.10 with the VFS0090/VFS0097 driver integrated:
 
 ```text
 libfprint-2-2              rebuilt libfprint with vfs0090 integrated
 libfprint-2-vfs0090        metapackage depending on the matching libfprint-2-2 and fprintd
 ```
-
-The driver is integrated into the normal `libfprint-2-2` shared library. The metapackage gives apt users one obvious package to install or remove, and it recommends `libpam-fprintd` so PAM support is installed by default on normal apt setups.
 
 ## Supported device
 
@@ -25,34 +23,7 @@ Expected output includes:
 ID 138a:0090 Validity Sensors, Inc. VFS7500 Touch Fingerprint Sensor
 ```
 
-The upstream VFS0090 work also includes `138a:0097`. This repo was built and tested on Debian trixie with `138a:0090`.
-
-## Supported distributions
-
-This repository currently publishes one `amd64` binary build:
-
-```text
-1:1.94.10+vfs0090-1~deb13vfs1
-```
-
-Use it on:
-
-- Debian 13/trixie, amd64
-- Ubuntu 24.04 LTS/noble or newer, amd64, if apt can satisfy the dependency names shown below
-
-Do not use this binary package on Ubuntu 22.04/jammy. It was built against the newer t64 ABI package names such as `libssl3t64` and `libglib2.0-0t64`, which are not the normal jammy package names.
-
-The runtime dependencies are:
-
-```text
-libc6 (>= 2.38)
-libglib2.0-0t64 (>= 2.68.0)
-libgudev-1.0-0 (>= 146)
-libgusb2 (>= 0.3.3)
-libnss3
-libpixman-1-0
-libssl3t64
-```
+The upstream VFS0090 work includes support for `138a:0097` and  `138a:0090`.
 
 ## Install on Debian
 
@@ -66,20 +37,14 @@ curl -fsSL https://jamesyc.github.io/libfprint/keys/libfprint-vfs0090.asc |
   sudo tee /etc/apt/keyrings/libfprint-vfs0090.asc >/dev/null
 ```
 
-The current apt signing key fingerprint is:
+The current apt signing key fingerprint is: `6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774`
 
-```text
-6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
-```
-
-Add this GitHub Pages-hosted apt repository:
+Add this apt repository:
 
 ```sh
 echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt any main' |
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
-
-The `any` suite name in the repository line is intentional. It is a small compatibility suite in this GitHub Pages-hosted apt repo, so the install command does not need to change just because a newer Debian release exists. Apt still enforces the package's runtime dependencies, so do not force the install if dependency resolution fails.
 
 Install:
 
@@ -105,14 +70,11 @@ ii libpam-fprintd            1.94.5-2
 
 ## Install on Ubuntu
 
-These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`. This is
-not a Launchpad PPA; it is the same small signed apt repository used by Debian.
-The suite name is `any` because that is the compatibility suite path in this
-apt repo, not your Ubuntu release codename.
+These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`.
 
-This Debian-built binary has not been rebuilt natively on Launchpad. It should
+This Debian-built binary has not been rebuilt natively as a Launchpad PPA. It should
 only be used on Ubuntu releases where apt can satisfy the t64 runtime
-dependencies listed above, especially `libglib2.0-0t64` and `libssl3t64`.
+dependencies, especially `libglib2.0-0t64` and `libssl3t64`.
 
 Add the repository signing key:
 
@@ -122,13 +84,10 @@ curl -fsSL https://jamesyc.github.io/libfprint/keys/libfprint-vfs0090.asc |
   sudo tee /etc/apt/keyrings/libfprint-vfs0090.asc >/dev/null
 ```
 
-The current apt signing key fingerprint is:
+The current apt signing key fingerprint is: `6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774`
 
-```text
-6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
-```
 
-Add this GitHub Pages-hosted apt repository:
+Add this apt repository:
 
 ```sh
 echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt any main' |
@@ -156,14 +115,6 @@ Verify that apt selected this repo's package:
 ```sh
 apt-cache policy libfprint-2-2 libfprint-2-vfs0090
 dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
-```
-
-If Ubuntu reports unsatisfied dependencies, remove the repo and do not force the install:
-
-```sh
-sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
-sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
-sudo apt update
 ```
 
 To uninstall on Ubuntu and return to Ubuntu's stock `libfprint`:
@@ -276,18 +227,7 @@ sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpa
 
 ## Build notes
 
-The binary package build passed the upstream test suite:
-
-```text
-Ok:   124
-Fail: 0
-```
-
-The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
-USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
-returned `verify-match`.
-
-The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. The deploy publishes both `any` and `trixie` suite indexes that point at the same package pool; `any` is the documented install path, and `trixie` remains available for older source-list entries. The quilt series separates the VFS0090 work by responsibility:
+The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. 
 
 - `0001-vfs0090-import-driver.patch` imports the driver sources from the VFS0090 upstream work
 - `0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch` carries the local integrated-libfprint and enrollment fixes
