@@ -105,7 +105,14 @@ ii libpam-fprintd            1.94.5-2
 
 ## Install on Ubuntu
 
-These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`. They use the same signed repository as Debian. The suite name is still `trixie` because that is the repository path, not your Ubuntu release codename.
+These instructions are for Ubuntu 24.04 LTS/noble or newer on `amd64`. This is
+not a Launchpad PPA; it is the same small signed apt repository used by Debian.
+The suite name is still `trixie` because that is the repository path, not your
+Ubuntu release codename.
+
+This Debian-built binary has not been rebuilt natively on Launchpad. It should
+only be used on Ubuntu releases where apt can satisfy the t64 runtime
+dependencies listed above, especially `libglib2.0-0t64` and `libssl3t64`.
 
 Add the repository signing key:
 
@@ -128,10 +135,19 @@ echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https:/
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
-Install:
+Update apt and inspect the candidate before installing:
 
 ```sh
 sudo apt update
+apt-cache policy libfprint-2-2 libfprint-2-vfs0090
+```
+
+The candidate for both packages should be `1:1.94.10+vfs0090-1~deb13vfs1` from
+`raw.githubusercontent.com/jamesyc/libfprint`.
+
+Install:
+
+```sh
 sudo apt install fprintd libpam-fprintd libfprint-2-vfs0090
 ```
 
@@ -145,6 +161,16 @@ dpkg -l | awk '/libfprint|fprintd/ {print $1, $2, $3}'
 If Ubuntu reports unsatisfied dependencies, remove the repo and do not force the install:
 
 ```sh
+sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
+sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
+sudo apt update
+```
+
+To uninstall on Ubuntu and return to Ubuntu's stock `libfprint`:
+
+```sh
+sudo apt remove libfprint-2-vfs0090
+sudo apt install --reinstall libfprint-2-2 fprintd libpam-fprintd
 sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
 sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
