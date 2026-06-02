@@ -173,8 +173,8 @@ sudo apt remove libfprint-2-vfs0090
 sudo rm -f /etc/apt/sources.list.d/libfprint-vfs0090.list
 sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
-apt-cache policy libfprint-2-2
-stock_version="$(apt-cache policy libfprint-2-2 | awk '/Candidate:/ {print $2}')"
+apt-cache madison libfprint-2-2
+stock_version="$(apt-cache madison libfprint-2-2 | awk '$1 == "libfprint-2-2" {print $3; exit}')"
 sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
 
@@ -261,16 +261,16 @@ sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
 ```
 
-Check that the `libfprint-2-2` candidate now comes from Debian or Ubuntu, not `raw.githubusercontent.com`:
+Find the stock distro version. This should list Debian or Ubuntu, not `raw.githubusercontent.com`:
 
 ```sh
-apt-cache policy libfprint-2-2
+apt-cache madison libfprint-2-2
 ```
 
 Downgrade or reinstall the stock distro package:
 
 ```sh
-stock_version="$(apt-cache policy libfprint-2-2 | awk '/Candidate:/ {print $2}')"
+stock_version="$(apt-cache madison libfprint-2-2 | awk '$1 == "libfprint-2-2" {print $3; exit}')"
 sudo apt install --allow-downgrades "libfprint-2-2=$stock_version" fprintd libpam-fprintd
 ```
 
