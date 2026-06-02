@@ -62,7 +62,7 @@ Add the repository signing key:
 
 ```sh
 sudo install -d -m 0755 /etc/apt/keyrings
-curl -fsSL https://raw.githubusercontent.com/jamesyc/libfprint/main/keys/libfprint-vfs0090.asc |
+curl -fsSL https://jamesyc.github.io/libfprint/keys/libfprint-vfs0090.asc |
   sudo tee /etc/apt/keyrings/libfprint-vfs0090.asc >/dev/null
 ```
 
@@ -72,14 +72,14 @@ The current apt signing key fingerprint is:
 6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
 ```
 
-Add this GitHub-hosted apt repository:
+Add this GitHub Pages-hosted apt repository:
 
 ```sh
-echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://raw.githubusercontent.com/jamesyc/libfprint/main/apt trixie main' |
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt trixie main' |
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
-The `trixie` suite name in the repository line is intentional. It is the path used by this small GitHub-hosted apt repo.
+The `trixie` suite name in the repository line is intentional. It is the path used by this small GitHub Pages-hosted apt repo.
 
 Install:
 
@@ -118,7 +118,7 @@ Add the repository signing key:
 
 ```sh
 sudo install -d -m 0755 /etc/apt/keyrings
-curl -fsSL https://raw.githubusercontent.com/jamesyc/libfprint/main/keys/libfprint-vfs0090.asc |
+curl -fsSL https://jamesyc.github.io/libfprint/keys/libfprint-vfs0090.asc |
   sudo tee /etc/apt/keyrings/libfprint-vfs0090.asc >/dev/null
 ```
 
@@ -128,10 +128,10 @@ The current apt signing key fingerprint is:
 6FF6 4038 E801 2499 E58B  9FF3 6DC6 3E5D 005D E774
 ```
 
-Add this GitHub-hosted apt repository:
+Add this GitHub Pages-hosted apt repository:
 
 ```sh
-echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://raw.githubusercontent.com/jamesyc/libfprint/main/apt trixie main' |
+echo 'deb [arch=amd64 signed-by=/etc/apt/keyrings/libfprint-vfs0090.asc] https://jamesyc.github.io/libfprint/apt trixie main' |
   sudo tee /etc/apt/sources.list.d/libfprint-vfs0090.list
 ```
 
@@ -143,7 +143,7 @@ apt-cache policy libfprint-2-2 libfprint-2-vfs0090
 ```
 
 The candidate for both packages should be `1:1.94.10+vfs0090-1~deb13vfs1` from
-`raw.githubusercontent.com/jamesyc/libfprint`.
+`jamesyc.github.io/libfprint`.
 
 Install:
 
@@ -261,7 +261,7 @@ sudo rm -f /etc/apt/keyrings/libfprint-vfs0090.asc
 sudo apt update
 ```
 
-Find the stock distro version. This should list Debian or Ubuntu, not `raw.githubusercontent.com`:
+Find the stock distro version. This should list Debian or Ubuntu, not `jamesyc.github.io`:
 
 ```sh
 apt-cache madison libfprint-2-2
@@ -287,7 +287,7 @@ The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
 USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
 returned `verify-match`.
 
-The source package is included under `source/`, and the integrated driver patches are under `patches/`. The quilt series separates the VFS0090 work by responsibility:
+The source package is included under `source/`, and the integrated driver patches are under `patches/`. GitHub Actions builds the binary packages from that source package and publishes the signed apt repository under GitHub Pages. The quilt series separates the VFS0090 work by responsibility:
 
 - `0001-vfs0090-import-driver.patch` imports the driver sources from the VFS0090 upstream work
 - `0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch` carries the local integrated-libfprint and enrollment fixes

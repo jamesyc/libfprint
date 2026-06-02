@@ -1,2 +1,5 @@
 .DS_Store
 .gnupg/
+.build/
+.build-deps/
+public/
