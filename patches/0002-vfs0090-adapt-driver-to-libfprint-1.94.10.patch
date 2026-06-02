@@ -1,0 +1,223 @@
+Description: Adapt VFS0090 driver to integrated libfprint 1.94.10
+ Remove the TOD shared-driver entry point, use libfprint 1.94.10 APIs,
+ cover newer enum cases, and set enrollment templates to NBIS before
+ adding image prints. The enrollment fix avoids fprintd failures where
+ libfprint rejects an undefined template type.
+Origin: vendor
+Forwarded: no
+Last-Update: 2026-06-02
+
+diff --git a/libfprint/drivers/vfs0090/vfs0090.c b/libfprint/drivers/vfs0090/vfs0090.c
+index 8034faf..1c607d6 100644
+--- a/libfprint/drivers/vfs0090/vfs0090.c
++++ b/libfprint/drivers/vfs0090/vfs0090.c
+@@ -24,6 +24,7 @@
+ 
+ #include <errno.h>
+ #include <ctype.h>
++#include <linux/limits.h>
+ #include <nss.h>
+ #include <pk11pub.h>
+ #include <sechash.h>
+@@ -69,12 +70,6 @@ struct _FpiDeviceVfs0090
+ 
+ G_DEFINE_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FP_TYPE_DEVICE)
+ 
+-GType
+-fpi_tod_shared_driver_get_type (void)
+-{
+-  return fpi_device_vfs0090_get_type ();
+-}
+-
+ G_DEFINE_AUTOPTR_CLEANUP_FUNC (EVP_CIPHER_CTX, EVP_CIPHER_CTX_free);
+ G_DEFINE_AUTOPTR_CLEANUP_FUNC (ECDSA_SIG, ECDSA_SIG_free);
+ G_DEFINE_AUTOPTR_CLEANUP_FUNC (EC_KEY, EC_KEY_free);
+@@ -318,6 +313,8 @@ async_read_from_usb (FpDevice *dev, FpiTransferType transfer_type,
+                                        (guint8 *) buffer, buffer_size, NULL);
+       break;
+ 
++    case FP_TRANSFER_NONE:
++    case FP_TRANSFER_CONTROL:
+     default:
+       g_assert_not_reached ();
+     }
+@@ -399,7 +396,7 @@ async_read_encrypted_callback (FpiUsbTransfer *transfer, FpDevice *dev,
+   g_autofree VfsAsyncUsbEncryptedOperationData *enc_op = data;
+   FpiDeviceVfs0090 *vdev = FPI_DEVICE_VFS0090 (dev);
+ 
+-  enc_op->encrypted_data = g_memdup (vdev->buffer, vdev->buffer_length);
++  enc_op->encrypted_data = g_memdup2 (vdev->buffer, vdev->buffer_length);
+   enc_op->encrypted_data_size = vdev->buffer_length;
+ 
+   if (!error &&
+@@ -1629,7 +1626,7 @@ led_blink_callback_with_ssm (FpiUsbTransfer *transfer, FpDevice *dev,
+ 
+   if (!error)
+     {
+-      fpi_ssm_next_state_delayed (ssm, 200, NULL);
++      fpi_ssm_next_state_delayed (ssm, 200);
+     }
+   else
+     {
+@@ -1654,7 +1651,9 @@ restart_scan_or_deactivate (FpiDeviceVfs0090 *vdev)
+ static gboolean
+ vfs_device_supports_capture (FpDevice *dev)
+ {
+-  if (!fp_device_supports_capture (dev))
++  FpDeviceFeature features = fp_device_get_features (dev);
++
++  if (!(features & FP_DEVICE_FEATURE_CAPTURE))
+     return FALSE;
+ 
+   return fpi_device_get_driver_data (dev) == FPI_DEVICE_ACTION_CAPTURE;
+@@ -1714,7 +1713,7 @@ finger_db_check_callback (FpiSsm *ssm, FpDevice *dev, GError *error)
+     }
+ }
+ 
+-/* Remove once included in TOD */
++/* Local copy used by the VFS0090 database enrollment path. */
+ static gchar *
+ _fpi_print_generate_user_id (FpPrint *print)
+ {
+@@ -1938,6 +1937,14 @@ handle_db_match_reply (FpiDeviceVfs0090 *vdev, FpiMatchResult result)
+         break;
+       }
+ 
++    case FPI_DEVICE_ACTION_NONE:
++    case FPI_DEVICE_ACTION_PROBE:
++    case FPI_DEVICE_ACTION_OPEN:
++    case FPI_DEVICE_ACTION_CLOSE:
++    case FPI_DEVICE_ACTION_CAPTURE:
++    case FPI_DEVICE_ACTION_LIST:
++    case FPI_DEVICE_ACTION_DELETE:
++    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
+     default:
+       g_assert_not_reached ();
+     }
+@@ -2145,11 +2152,26 @@ minutiae_detected (GObject *source_object, GAsyncResult *res, gpointer user_data
+ 
+         if (print)
+           {
+-            if (vdev->enroll_stage == 0)
+-              fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
++            FpiPrintType print_type;
++
++            g_object_get (enroll_print, "fpi-type", &print_type, NULL);
++            if (print_type == FPI_PRINT_UNDEFINED)
++              {
++                fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
++                print_type = FPI_PRINT_NBIS;
++              }
+ 
+-            fpi_print_add_print (enroll_print, print);
+-            vdev->enroll_stage += 1;
++            if (print_type != FPI_PRINT_NBIS)
++              {
++                g_clear_object (&print);
++                error = fpi_device_error_new_msg (FP_DEVICE_ERROR_GENERAL,
++                                                  "Cannot add NBIS image print to non-NBIS enrollment template");
++              }
++            else
++              {
++                fpi_print_add_print (enroll_print, print);
++                vdev->enroll_stage += 1;
++              }
+           }
+ 
+         g_set_object (&vdev->enrolled_print, enroll_print);
+@@ -2219,6 +2241,14 @@ minutiae_detected (GObject *source_object, GAsyncResult *res, gpointer user_data
+         break;
+       }
+ 
++    case FPI_DEVICE_ACTION_NONE:
++    case FPI_DEVICE_ACTION_PROBE:
++    case FPI_DEVICE_ACTION_OPEN:
++    case FPI_DEVICE_ACTION_CLOSE:
++    case FPI_DEVICE_ACTION_CAPTURE:
++    case FPI_DEVICE_ACTION_LIST:
++    case FPI_DEVICE_ACTION_DELETE:
++    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
+     default:
+       g_assert_not_reached ();
+     }
+@@ -2237,7 +2267,7 @@ finger_image_submit (FpDevice         *dev,
+   img->flags = FPI_IMAGE_H_FLIPPED;
+   memcpy (img->data, imgdown->image, VFS_IMAGE_SIZE * VFS_IMAGE_SIZE);
+ 
+-#if HAVE_PIXMAN
++#ifdef HAVE_PIXMAN
+   if (VFS_IMAGE_RESCALE > 1)
+     {
+       g_autoptr(FpImage) resized = NULL;
+@@ -2364,6 +2394,14 @@ use_database_matching (FpDevice *dev)
+         return FALSE;
+       }
+ 
++    case FPI_DEVICE_ACTION_NONE:
++    case FPI_DEVICE_ACTION_PROBE:
++    case FPI_DEVICE_ACTION_OPEN:
++    case FPI_DEVICE_ACTION_CLOSE:
++    case FPI_DEVICE_ACTION_CAPTURE:
++    case FPI_DEVICE_ACTION_LIST:
++    case FPI_DEVICE_ACTION_DELETE:
++    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
+     default:
+       return FALSE;
+     }
+@@ -2505,6 +2543,14 @@ report_retry_error (FpDevice *dev, FpDeviceRetry retry)
+       fpi_device_identify_report (dev, NULL, NULL, error);
+       break;
+ 
++    case FPI_DEVICE_ACTION_NONE:
++    case FPI_DEVICE_ACTION_PROBE:
++    case FPI_DEVICE_ACTION_OPEN:
++    case FPI_DEVICE_ACTION_CLOSE:
++    case FPI_DEVICE_ACTION_CAPTURE:
++    case FPI_DEVICE_ACTION_LIST:
++    case FPI_DEVICE_ACTION_DELETE:
++    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
+     default:
+       fpi_device_action_error (dev, error);
+     }
+@@ -2913,6 +2959,12 @@ dev_deactivate_callback (FpiSsm *ssm, FpDevice *dev, GError *error)
+           fpi_device_identify_complete (dev, NULL);
+           break;
+ 
++        case FPI_DEVICE_ACTION_PROBE:
++        case FPI_DEVICE_ACTION_OPEN:
++        case FPI_DEVICE_ACTION_CLOSE:
++        case FPI_DEVICE_ACTION_LIST:
++        case FPI_DEVICE_ACTION_DELETE:
++        case FPI_DEVICE_ACTION_CLEAR_STORAGE:
+         default:
+           g_assert_not_reached ();
+         }
+@@ -2951,7 +3003,7 @@ reactivate_ssm (FpiSsm *ssm, FpDevice *dev)
+   switch (fpi_ssm_get_cur_state (ssm))
+     {
+     case REACTIVATE_STATE_WAIT:
+-      fpi_ssm_next_state_delayed (ssm, 100, NULL);
++      fpi_ssm_next_state_delayed (ssm, 100);
+       break;
+ 
+     case REACTIVATE_STATE_DEACTIVATE:
+@@ -3154,4 +3206,6 @@ fpi_device_vfs0090_class_init (FpiDeviceVfs0090Class *klass)
+   dev_class->identify = dev_activate;
+   dev_class->capture = dev_activate;
+   dev_class->cancel = dev_cancel;
++
++  fpi_device_class_auto_initialize_features (dev_class);
+ }
+diff --git a/libfprint/drivers/vfs0090/vfs0090.h b/libfprint/drivers/vfs0090/vfs0090.h
+index f3c2072..77dcc44 100644
+--- a/libfprint/drivers/vfs0090/vfs0090.h
++++ b/libfprint/drivers/vfs0090/vfs0090.h
+@@ -24,8 +24,6 @@
+ 
+ G_DECLARE_FINAL_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FPI, DEVICE_VFS0090, FpDevice)
+ 
+-GType fpi_tod_shared_driver_get_type (void);
+-
+ #define DMI_PRODUCT_NAME_NODE "/sys/class/dmi/id/product_name"
+ #define DMI_PRODUCT_SERIAL_NODE "/sys/class/dmi/id/product_serial"
+ 

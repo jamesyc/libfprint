@@ -1,0 +1,63 @@
+Description: Enable VFS0090 in the libfprint build
+ Register vfs0090 as a built-in driver and wire its NSS, AES, and
+ OpenSSL helper dependencies into Meson.
+Origin: vendor
+Forwarded: no
+Last-Update: 2026-06-02
+
+diff --git a/libfprint/meson.build b/libfprint/meson.build
+index 3449481..2898976 100644
+--- a/libfprint/meson.build
++++ b/libfprint/meson.build
+@@ -129,6 +129,8 @@ driver_sources = {
+         [ 'drivers/egismoc/egismoc.c' ],
+     'vfs0050' :
+         [ 'drivers/vfs0050.c' ],
++    'vfs0090' :
++        [ 'drivers/vfs0090/vfs0090.c', 'drivers/vfs0090/vfs0090.h' ],
+     'elan' :
+         [ 'drivers/elan.c' ],
+     'elanmoc' :
+@@ -164,6 +166,8 @@ helper_sources = {
+         [ 'drivers/aes3k.c' ],
+     'openssl' :
+         [ ],
++    'nss' :
++        [ ],
+     'udev' :
+         [ ],
+     'virtual' :
+diff --git a/meson.build b/meson.build
+index 14fb11f..8e7cdfe 100644
+--- a/meson.build
++++ b/meson.build
+@@ -128,6 +128,7 @@ default_drivers = [
+     'vfs101',
+     'vfs301',
+     'vfs0050',
++    'vfs0090',
+     'etes603',
+     'egis0570',
+     'egismoc',
+@@ -211,6 +212,7 @@ driver_helper_mapping = {
+     'aes4000' : [ 'aeslib', 'aes3k' ],
+     'uru4000' : [ 'openssl' ],
+     'elanspi' : [ 'udev' ],
++    'vfs0090' : [ 'nss', 'aes3k', 'openssl' ],
+     'virtual_image'          : [ 'virtual' ],
+     'virtual_device'         : [ 'virtual' ],
+     'virtual_device_storage' : [ 'virtual' ],
+@@ -273,6 +275,13 @@ foreach i : driver_helpers
+         endif
+ 
+         optional_deps += openssl_dep
++    elif i == 'nss'
++        nss_dep = dependency('nss', required: false)
++        if not nss_dep.found()
++            error('NSS is required for @0@ and possibly others'.format(driver))
++        endif
++
++        optional_deps += nss_dep
+     elif i == 'udev'
+         install_udev_rules = true
+ 

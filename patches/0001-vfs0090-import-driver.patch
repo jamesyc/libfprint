@@ -1,37 +1,17 @@
-diff --git a/data/autosuspend.hwdb b/data/autosuspend.hwdb
-index 6c15fb9..2697e08 100644
---- a/data/autosuspend.hwdb
-+++ b/data/autosuspend.hwdb
-@@ -323,6 +323,12 @@ usb:v138Ap0050*
-  ID_AUTOSUSPEND=1
-  ID_PERSIST=0
- 
-+# Supported by libfprint driver vfs0090
-+usb:v138Ap0090*
-+usb:v138Ap0097*
-+ ID_AUTOSUSPEND=1
-+ ID_PERSIST=0
-+
- # Supported by libfprint driver vfs101
- usb:v138Ap0001*
-  ID_AUTOSUSPEND=1
-@@ -426,10 +432,8 @@ usb:v138Ap003A*
- usb:v138Ap003C*
- usb:v138Ap003D*
- usb:v138Ap003F*
--usb:v138Ap0090*
- usb:v138Ap0092*
- usb:v138Ap0094*
--usb:v138Ap0097*
- usb:v138Ap009D*
- usb:v138Ap00AB*
- usb:v138Ap00A6*
+Description: Import Validity VFS0090/VFS0097 driver sources
+ Import the VFS0090 driver sources from the standalone driver repository.
+ The import is kept separate from local libfprint integration changes so
+ future upstream driver refreshes can be reviewed independently.
+Origin: other, https://github.com/3v1n0/libfprint-tod-vfs0090
+Forwarded: not-needed
+Last-Update: 2026-06-02
+
 diff --git a/libfprint/drivers/vfs0090/vfs0090.c b/libfprint/drivers/vfs0090/vfs0090.c
 new file mode 100644
-index 0000000..1c607d6
+index 0000000..8034faf
 --- /dev/null
 +++ b/libfprint/drivers/vfs0090/vfs0090.c
-@@ -0,0 +1,3211 @@
+@@ -0,0 +1,3157 @@
 +/*
 + * Validity VFS0090 driver for libfprint
 + * Copyright (C) 2017 Nikita Mikhailov <nikita.s.mikhailov@gmail.com>
@@ -58,7 +38,6 @@ index 0000000..1c607d6
 +
 +#include <errno.h>
 +#include <ctype.h>
-+#include <linux/limits.h>
 +#include <nss.h>
 +#include <pk11pub.h>
 +#include <sechash.h>
@@ -103,6 +82,12 @@ index 0000000..1c607d6
 +};
 +
 +G_DEFINE_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FP_TYPE_DEVICE)
++
++GType
++fpi_tod_shared_driver_get_type (void)
++{
++  return fpi_device_vfs0090_get_type ();
++}
 +
 +G_DEFINE_AUTOPTR_CLEANUP_FUNC (EVP_CIPHER_CTX, EVP_CIPHER_CTX_free);
 +G_DEFINE_AUTOPTR_CLEANUP_FUNC (ECDSA_SIG, ECDSA_SIG_free);
@@ -347,8 +332,6 @@ index 0000000..1c607d6
 +                                       (guint8 *) buffer, buffer_size, NULL);
 +      break;
 +
-+    case FP_TRANSFER_NONE:
-+    case FP_TRANSFER_CONTROL:
 +    default:
 +      g_assert_not_reached ();
 +    }
@@ -430,7 +413,7 @@ index 0000000..1c607d6
 +  g_autofree VfsAsyncUsbEncryptedOperationData *enc_op = data;
 +  FpiDeviceVfs0090 *vdev = FPI_DEVICE_VFS0090 (dev);
 +
-+  enc_op->encrypted_data = g_memdup2 (vdev->buffer, vdev->buffer_length);
++  enc_op->encrypted_data = g_memdup (vdev->buffer, vdev->buffer_length);
 +  enc_op->encrypted_data_size = vdev->buffer_length;
 +
 +  if (!error &&
@@ -1660,7 +1643,7 @@ index 0000000..1c607d6
 +
 +  if (!error)
 +    {
-+      fpi_ssm_next_state_delayed (ssm, 200);
++      fpi_ssm_next_state_delayed (ssm, 200, NULL);
 +    }
 +  else
 +    {
@@ -1685,9 +1668,7 @@ index 0000000..1c607d6
 +static gboolean
 +vfs_device_supports_capture (FpDevice *dev)
 +{
-+  FpDeviceFeature features = fp_device_get_features (dev);
-+
-+  if (!(features & FP_DEVICE_FEATURE_CAPTURE))
++  if (!fp_device_supports_capture (dev))
 +    return FALSE;
 +
 +  return fpi_device_get_driver_data (dev) == FPI_DEVICE_ACTION_CAPTURE;
@@ -1747,7 +1728,7 @@ index 0000000..1c607d6
 +    }
 +}
 +
-+/* Local copy used by the VFS0090 database enrollment path. */
++/* Remove once included in TOD */
 +static gchar *
 +_fpi_print_generate_user_id (FpPrint *print)
 +{
@@ -1971,14 +1952,6 @@ index 0000000..1c607d6
 +        break;
 +      }
 +
-+    case FPI_DEVICE_ACTION_NONE:
-+    case FPI_DEVICE_ACTION_PROBE:
-+    case FPI_DEVICE_ACTION_OPEN:
-+    case FPI_DEVICE_ACTION_CLOSE:
-+    case FPI_DEVICE_ACTION_CAPTURE:
-+    case FPI_DEVICE_ACTION_LIST:
-+    case FPI_DEVICE_ACTION_DELETE:
-+    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
 +    default:
 +      g_assert_not_reached ();
 +    }
@@ -2186,26 +2159,11 @@ index 0000000..1c607d6
 +
 +        if (print)
 +          {
-+            FpiPrintType print_type;
++            if (vdev->enroll_stage == 0)
++              fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
 +
-+            g_object_get (enroll_print, "fpi-type", &print_type, NULL);
-+            if (print_type == FPI_PRINT_UNDEFINED)
-+              {
-+                fpi_print_set_type (enroll_print, FPI_PRINT_NBIS);
-+                print_type = FPI_PRINT_NBIS;
-+              }
-+
-+            if (print_type != FPI_PRINT_NBIS)
-+              {
-+                g_clear_object (&print);
-+                error = fpi_device_error_new_msg (FP_DEVICE_ERROR_GENERAL,
-+                                                  "Cannot add NBIS image print to non-NBIS enrollment template");
-+              }
-+            else
-+              {
-+                fpi_print_add_print (enroll_print, print);
-+                vdev->enroll_stage += 1;
-+              }
++            fpi_print_add_print (enroll_print, print);
++            vdev->enroll_stage += 1;
 +          }
 +
 +        g_set_object (&vdev->enrolled_print, enroll_print);
@@ -2275,14 +2233,6 @@ index 0000000..1c607d6
 +        break;
 +      }
 +
-+    case FPI_DEVICE_ACTION_NONE:
-+    case FPI_DEVICE_ACTION_PROBE:
-+    case FPI_DEVICE_ACTION_OPEN:
-+    case FPI_DEVICE_ACTION_CLOSE:
-+    case FPI_DEVICE_ACTION_CAPTURE:
-+    case FPI_DEVICE_ACTION_LIST:
-+    case FPI_DEVICE_ACTION_DELETE:
-+    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
 +    default:
 +      g_assert_not_reached ();
 +    }
@@ -2301,7 +2251,7 @@ index 0000000..1c607d6
 +  img->flags = FPI_IMAGE_H_FLIPPED;
 +  memcpy (img->data, imgdown->image, VFS_IMAGE_SIZE * VFS_IMAGE_SIZE);
 +
-+#ifdef HAVE_PIXMAN
++#if HAVE_PIXMAN
 +  if (VFS_IMAGE_RESCALE > 1)
 +    {
 +      g_autoptr(FpImage) resized = NULL;
@@ -2428,14 +2378,6 @@ index 0000000..1c607d6
 +        return FALSE;
 +      }
 +
-+    case FPI_DEVICE_ACTION_NONE:
-+    case FPI_DEVICE_ACTION_PROBE:
-+    case FPI_DEVICE_ACTION_OPEN:
-+    case FPI_DEVICE_ACTION_CLOSE:
-+    case FPI_DEVICE_ACTION_CAPTURE:
-+    case FPI_DEVICE_ACTION_LIST:
-+    case FPI_DEVICE_ACTION_DELETE:
-+    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
 +    default:
 +      return FALSE;
 +    }
@@ -2577,14 +2519,6 @@ index 0000000..1c607d6
 +      fpi_device_identify_report (dev, NULL, NULL, error);
 +      break;
 +
-+    case FPI_DEVICE_ACTION_NONE:
-+    case FPI_DEVICE_ACTION_PROBE:
-+    case FPI_DEVICE_ACTION_OPEN:
-+    case FPI_DEVICE_ACTION_CLOSE:
-+    case FPI_DEVICE_ACTION_CAPTURE:
-+    case FPI_DEVICE_ACTION_LIST:
-+    case FPI_DEVICE_ACTION_DELETE:
-+    case FPI_DEVICE_ACTION_CLEAR_STORAGE:
 +    default:
 +      fpi_device_action_error (dev, error);
 +    }
@@ -2993,12 +2927,6 @@ index 0000000..1c607d6
 +          fpi_device_identify_complete (dev, NULL);
 +          break;
 +
-+        case FPI_DEVICE_ACTION_PROBE:
-+        case FPI_DEVICE_ACTION_OPEN:
-+        case FPI_DEVICE_ACTION_CLOSE:
-+        case FPI_DEVICE_ACTION_LIST:
-+        case FPI_DEVICE_ACTION_DELETE:
-+        case FPI_DEVICE_ACTION_CLEAR_STORAGE:
 +        default:
 +          g_assert_not_reached ();
 +        }
@@ -3037,7 +2965,7 @@ index 0000000..1c607d6
 +  switch (fpi_ssm_get_cur_state (ssm))
 +    {
 +    case REACTIVATE_STATE_WAIT:
-+      fpi_ssm_next_state_delayed (ssm, 100);
++      fpi_ssm_next_state_delayed (ssm, 100, NULL);
 +      break;
 +
 +    case REACTIVATE_STATE_DEACTIVATE:
@@ -3240,15 +3168,13 @@ index 0000000..1c607d6
 +  dev_class->identify = dev_activate;
 +  dev_class->capture = dev_activate;
 +  dev_class->cancel = dev_cancel;
-+
-+  fpi_device_class_auto_initialize_features (dev_class);
 +}
 diff --git a/libfprint/drivers/vfs0090/vfs0090.h b/libfprint/drivers/vfs0090/vfs0090.h
 new file mode 100644
-index 0000000..77dcc44
+index 0000000..f3c2072
 --- /dev/null
 +++ b/libfprint/drivers/vfs0090/vfs0090.h
-@@ -0,0 +1,875 @@
+@@ -0,0 +1,877 @@
 +/*
 + * Validity VFS0090 driver for libfprint
 + * Copyright (C) 2017 Nikita Mikhailov <nikita.s.mikhailov@gmail.com>
@@ -3274,6 +3200,8 @@ index 0000000..77dcc44
 +#include "fpi-device.h"
 +
 +G_DECLARE_FINAL_TYPE (FpiDeviceVfs0090, fpi_device_vfs0090, FPI, DEVICE_VFS0090, FpDevice)
++
++GType fpi_tod_shared_driver_get_type (void);
 +
 +#define DMI_PRODUCT_NAME_NODE "/sys/class/dmi/id/product_name"
 +#define DMI_PRODUCT_SERIAL_NODE "/sys/class/dmi/id/product_serial"
@@ -4124,74 +4052,3 @@ index 0000000..77dcc44
 +  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 +  0x00, 0x00, 0x00, 0x00, 0x00
 +};
-diff --git a/libfprint/fprint-list-udev-hwdb.c b/libfprint/fprint-list-udev-hwdb.c
-index 0527db1..bcc72a8 100644
---- a/libfprint/fprint-list-udev-hwdb.c
-+++ b/libfprint/fprint-list-udev-hwdb.c
-@@ -106,10 +106,8 @@ static const FpIdEntry allowlist_id_table[] = {
-   { .vid = 0x138a, .pid = 0x003c },
-   { .vid = 0x138a, .pid = 0x003d },
-   { .vid = 0x138a, .pid = 0x003f },
--  { .vid = 0x138a, .pid = 0x0090 },
-   { .vid = 0x138a, .pid = 0x0092 },
-   { .vid = 0x138a, .pid = 0x0094 },
--  { .vid = 0x138a, .pid = 0x0097 },
-   { .vid = 0x138a, .pid = 0x009d },
-   { .vid = 0x138a, .pid = 0x00ab },
-   { .vid = 0x138a, .pid = 0x00a6 },
-diff --git a/libfprint/meson.build b/libfprint/meson.build
-index 3449481..2898976 100644
---- a/libfprint/meson.build
-+++ b/libfprint/meson.build
-@@ -129,6 +129,8 @@ driver_sources = {
-         [ 'drivers/egismoc/egismoc.c' ],
-     'vfs0050' :
-         [ 'drivers/vfs0050.c' ],
-+    'vfs0090' :
-+        [ 'drivers/vfs0090/vfs0090.c', 'drivers/vfs0090/vfs0090.h' ],
-     'elan' :
-         [ 'drivers/elan.c' ],
-     'elanmoc' :
-@@ -164,6 +166,8 @@ helper_sources = {
-         [ 'drivers/aes3k.c' ],
-     'openssl' :
-         [ ],
-+    'nss' :
-+        [ ],
-     'udev' :
-         [ ],
-     'virtual' :
-diff --git a/meson.build b/meson.build
-index 14fb11f..8e7cdfe 100644
---- a/meson.build
-+++ b/meson.build
-@@ -128,6 +128,7 @@ default_drivers = [
-     'vfs101',
-     'vfs301',
-     'vfs0050',
-+    'vfs0090',
-     'etes603',
-     'egis0570',
-     'egismoc',
-@@ -211,6 +212,7 @@ driver_helper_mapping = {
-     'aes4000' : [ 'aeslib', 'aes3k' ],
-     'uru4000' : [ 'openssl' ],
-     'elanspi' : [ 'udev' ],
-+    'vfs0090' : [ 'nss', 'aes3k', 'openssl' ],
-     'virtual_image'          : [ 'virtual' ],
-     'virtual_device'         : [ 'virtual' ],
-     'virtual_device_storage' : [ 'virtual' ],
-@@ -273,6 +275,13 @@ foreach i : driver_helpers
-         endif
- 
-         optional_deps += openssl_dep
-+    elif i == 'nss'
-+        nss_dep = dependency('nss', required: false)
-+        if not nss_dep.found()
-+            error('NSS is required for @0@ and possibly others'.format(driver))
-+        endif
-+
-+        optional_deps += nss_dep
-     elif i == 'udev'
-         install_udev_rules = true
- 

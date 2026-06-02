@@ -1,0 +1,50 @@
+Description: Mark VFS0090/VFS0097 USB IDs as supported
+ Move 138a:0090 and 138a:0097 out of libfprint unsupported-device
+ metadata and add autosuspend metadata for the integrated vfs0090 driver.
+Origin: vendor
+Forwarded: no
+Last-Update: 2026-06-02
+
+diff --git a/data/autosuspend.hwdb b/data/autosuspend.hwdb
+index 6c15fb9..2697e08 100644
+--- a/data/autosuspend.hwdb
++++ b/data/autosuspend.hwdb
+@@ -323,6 +323,12 @@ usb:v138Ap0050*
+  ID_AUTOSUSPEND=1
+  ID_PERSIST=0
+ 
++# Supported by libfprint driver vfs0090
++usb:v138Ap0090*
++usb:v138Ap0097*
++ ID_AUTOSUSPEND=1
++ ID_PERSIST=0
++
+ # Supported by libfprint driver vfs101
+ usb:v138Ap0001*
+  ID_AUTOSUSPEND=1
+@@ -426,10 +432,8 @@ usb:v138Ap003A*
+ usb:v138Ap003C*
+ usb:v138Ap003D*
+ usb:v138Ap003F*
+-usb:v138Ap0090*
+ usb:v138Ap0092*
+ usb:v138Ap0094*
+-usb:v138Ap0097*
+ usb:v138Ap009D*
+ usb:v138Ap00AB*
+ usb:v138Ap00A6*
+diff --git a/libfprint/fprint-list-udev-hwdb.c b/libfprint/fprint-list-udev-hwdb.c
+index 0527db1..bcc72a8 100644
+--- a/libfprint/fprint-list-udev-hwdb.c
++++ b/libfprint/fprint-list-udev-hwdb.c
+@@ -106,10 +106,8 @@ static const FpIdEntry allowlist_id_table[] = {
+   { .vid = 0x138a, .pid = 0x003c },
+   { .vid = 0x138a, .pid = 0x003d },
+   { .vid = 0x138a, .pid = 0x003f },
+-  { .vid = 0x138a, .pid = 0x0090 },
+   { .vid = 0x138a, .pid = 0x0092 },
+   { .vid = 0x138a, .pid = 0x0094 },
+-  { .vid = 0x138a, .pid = 0x0097 },
+   { .vid = 0x138a, .pid = 0x009d },
+   { .vid = 0x138a, .pid = 0x00ab },
+   { .vid = 0x138a, .pid = 0x00a6 },

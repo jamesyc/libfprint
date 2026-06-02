@@ -4,31 +4,31 @@ Hash: SHA256
 Architectures: amd64
 Codename: trixie
 Components: main
-Date: Tue, 02 Jun 2026 20:14:04 +0000
+Date: Tue, 02 Jun 2026 20:28:12 +0000
 Description: libfprint VFS0090 packages
 Label: libfprint-vfs0090
 Origin: jamesyc/libfprint
 Suite: trixie
 MD5Sum:
- 863c721b2fd26775b7fb49ee7fd67be8              198 Release
+ 55212739eb142f66c2fa4c85a2652628              198 Release
  b84e8ad09e2511953a3704b7a9bc40a9             2641 main/binary-amd64/Packages
  6a9d778ea619a0fd1bf10d0f59135af3             1201 main/binary-amd64/Packages.gz
 SHA1:
- 21249747c682b17a2a44a48cfc1b6099c4af7419              198 Release
+ 7cdc28fbb56f1e556121138cfe93d2c5454747ac              198 Release
  66db00ba2500312ef92b85be1ba0821196038726             2641 main/binary-amd64/Packages
  1f584c9090fd74aa2c64da9eecc7adcc0dfb5661             1201 main/binary-amd64/Packages.gz
 SHA256:
- 28e9837d135bf37985f4e81be73eb3bdffb7385cedf0efd994785b4feb7ee57f              198 Release
+ a383eac2bdb819f5552968b37ed97f0aa02f78eb7479ff5fd280eceeb89290f0              198 Release
  0fc553618b1ad96baebf179d73dd3b45ea3a68b6328d25581937f1427bf1f1da             2641 main/binary-amd64/Packages
  4d137c1c18281baa569ea6bcba730c6960f77dbc412f96863ac4f16f813cb648             1201 main/binary-amd64/Packages.gz
 SHA512:
- 2c19273ff5f100f17996b2382af3c10ec41c391204de90726877a6d2832c8bbe25a6464acf8fd50100aa8b434dde5f97c7a601d1550a6bfe09931c4d33687010              198 Release
+ 471dee3b1f1dd48efc32dc21557b1177c9fdbc5562317cbf03e164afe1c7f85d4e708de76e12b75889f3153112d7983bf32f3780d079157c9306210987ff604b              198 Release
  6bdfe82c338e3fd814431174dd32806f69b2f441102024efd8e3facefd1070cfd723e3e2088bc99759e5d5d1f8a935d0c627fca97bd664fc36c540d8ca0e677a             2641 main/binary-amd64/Packages
  f938d5f52ef9589cf121f3a79b0d90fb5e2b4bb8b24b29a22e7f5ab18a0e2ec0486f240215f044c08e45e28ce57c5393900fd1db6e7786f973aefbb46c63000d             1201 main/binary-amd64/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYIAB0WIQRv9kA46AEkmeWLn/Ntxj5dAF3ndAUCah85rAAKCRBtxj5dAF3n
-dON1AQCNdb/ok+DlJ55cr3RM573Vl8rFuBTXMxLJlz+Gg1p3iQEAlWoKjWt7qvFt
-7AsUuaLY9Ntl1ag42R6P910qhFlsJgQ=
-=rRT4
+iHUEARYIAB0WIQRv9kA46AEkmeWLn/Ntxj5dAF3ndAUCah89NwAKCRBtxj5dAF3n
+dAnQAP4oBU9WpVrwcaEDuz5VjB3WxUZQLul5ykhZs8oDuOYvGQEAi6f658QpCL3t
+Ei05asUpceNYvYLy07Ofn+00pP0dhQU=
+=Pczn
 -----END PGP SIGNATURE-----

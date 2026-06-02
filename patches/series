@@ -1,0 +1,4 @@
+0001-vfs0090-import-driver.patch
+0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch
+0003-vfs0090-enable-driver-build.patch
+0004-vfs0090-mark-devices-supported.patch

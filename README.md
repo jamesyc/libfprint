@@ -287,12 +287,12 @@ The package was also installed on a Debian 13/trixie ThinkPad X1 Yoga with
 USB device `138a:0090`; `fprintd-enroll` completed and `fprintd-verify`
 returned `verify-match`.
 
-The source package is included under `source/`, and the integrated driver patch is under `patches/`. The patch does four things:
+The source package is included under `source/`, and the integrated driver patches are under `patches/`. The quilt series separates the VFS0090 work by responsibility:
 
-- adds the `vfs0090` driver sources
-- adds `vfs0090` to the Meson driver list
-- links the driver against NSS/OpenSSL dependencies available in Debian trixie
-- moves `138a:0090` and `138a:0097` out of libfprint's generated unsupported-device list
+- `0001-vfs0090-import-driver.patch` imports the driver sources from the VFS0090 upstream work
+- `0002-vfs0090-adapt-driver-to-libfprint-1.94.10.patch` carries the local integrated-libfprint and enrollment fixes
+- `0003-vfs0090-enable-driver-build.patch` adds the Meson/NSS/OpenSSL build wiring
+- `0004-vfs0090-mark-devices-supported.patch` moves `138a:0090` and `138a:0097` into supported-device metadata
 
 The Debian packaging also adds `libfprint-2-vfs0090` as a metapackage. It depends on the matching custom `libfprint-2-2` and `fprintd`, and recommends `libpam-fprintd`.
 
